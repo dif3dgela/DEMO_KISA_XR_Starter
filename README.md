@@ -114,6 +114,13 @@ Instantiate movement turn scene as a subscene for the right controller.
 Now that our VR experience is getting serious, let's stick to the Godot XR Tools library for the preparation of the VR scene.
 Remove our script coded previously (comment or detach the script), and instantiate the StartXR node in the main scene.
 This will take care of XR preparations in higher detail for us.
+You can check now all the additional configuration shown in the terminal when starting an XR Session
+
+
+## Teleportation
+
+Teleportation is a very handy movement in XR to move fast, its implementation in Godot is very simple.
+
 
 
 
