@@ -85,6 +85,18 @@ Hands can be found under godot-xr-tools/hands path.
 Add a low poly hand under the left controller and another one under the right controller
 
 
+## Add some lighting
+
+Hurrey! Hands and Camera3D should be moving now. The repo has only been tested on Meta Quest 2 and Meta Quest 3 though. Check possible problems for Pico and other devices.
+Let's add some lighting to improve the scene.
+
+Adding simple lighting in Godot is trivial. Go to Sun and environment settings and select add sun and add environment to it.
+Note that a DirectionalLight3D and a WorldEnvironment node will be added in the main.tscn main scene.
+
+
+
+
+
 
 
 
