@@ -22,18 +22,21 @@
 
 ## Hands on XR
 
-1) 
+1) Godot engine related configurations
 - Enable XR in project settings 
 - Enable XR shaders in project seetings
 - Restart
 
-2)
+2) Incorporating libraries
 - Add XR toolkit libraries for Godot XR in Asset Library:
    - Godot OpenXR Vendors plugin (vendors)
    - Godot XR tools for Godot (godot-xr-tools)
 - Restart
 
-3)
+3) Enable libraries
+- Godot does not enable libraries by default
+- Go to project settings, check the plugins tab and enable Godot-XR-Tools
+- Restart
 
 - Explore the assets library and check all the content from the libraries
 
@@ -92,6 +95,29 @@ Let's add some lighting to improve the scene.
 
 Adding simple lighting in Godot is trivial. Go to Sun and environment settings and select add sun and add environment to it.
 Note that a DirectionalLight3D and a WorldEnvironment node will be added in the main.tscn main scene.
+
+## Let's move
+
+In order to be able to move we just need to incorporate some functionality coded in the functions of the Godot-XR-Tools library.
+Go the the scene in which we have defined the XRRig and instantiate a child scene for the left and right controller.
+
+Movement is added instantiating a child scene called "MovementDirect", for instance we can add this to the left controller node.
+Inspect the properties of the movement, try alternating strafe for instance.
+
+Please note that this instantiation needs to incorporate a PlayerBody node to the scene, if not please restart Godot.
+
+Instantiate movement turn scene as a subscene for the right controller.
+
+
+## Let's refine
+
+Now that our VR experience is getting serious, let's stick to the Godot XR Tools library for the preparation of the VR scene.
+Remove our script coded previously (comment or detach the script), and instantiate the StartXR node in the main scene.
+This will take care of XR preparations in higher detail for us.
+
+
+
+
 
 
 
