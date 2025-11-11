@@ -1,6 +1,11 @@
-[gd_scene load_steps=5 format=3 uid="uid://dm11pb7jgwrua"]
+[gd_scene load_steps=12 format=3 uid="uid://dm11pb7jgwrua"]
 
 [ext_resource type="PackedScene" uid="uid://c8l60rnugru40" path="res://addons/godot-xr-tools/objects/pickable.tscn" id="1_fj7sv"]
+[ext_resource type="PackedScene" uid="uid://c25yxb0vt53vc" path="res://addons/godot-xr-tools/objects/grab_points/grab_point_hand_left.tscn" id="2_x5prv"]
+[ext_resource type="Script" uid="uid://bik4oe6tlpjjh" path="res://addons/godot-xr-tools/hands/poses/hand_pose_settings.gd" id="3_72l22"]
+[ext_resource type="Animation" uid="uid://c3e6h0rv2uw2d" path="res://addons/godot-xr-tools/hands/animations/left/Horns.res" id="3_at21k"]
+[ext_resource type="PackedScene" uid="uid://ctw7nbntd5pcj" path="res://addons/godot-xr-tools/objects/grab_points/grab_point_hand_right.tscn" id="4_at21k"]
+[ext_resource type="Animation" uid="uid://b1kqsodcr1til" path="res://addons/godot-xr-tools/hands/animations/right/Metal.res" id="6_at21k"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_ldwkk"]
 size = Vector3(0.08023224, 0.07301025, 0.24169616)
@@ -12,6 +17,16 @@ albedo_color = Color(0, 1, 0.14700127, 1)
 material = SubResource("StandardMaterial3D_4am6a")
 rings = 24
 ring_segments = 5
+
+[sub_resource type="Resource" id="Resource_ye4w3"]
+script = ExtResource("3_72l22")
+closed_pose = ExtResource("3_at21k")
+metadata/_custom_type_script = "uid://bik4oe6tlpjjh"
+
+[sub_resource type="Resource" id="Resource_sxjka"]
+script = ExtResource("3_72l22")
+closed_pose = ExtResource("6_at21k")
+metadata/_custom_type_script = "uid://bik4oe6tlpjjh"
 
 [node name="PickableObject" instance=ExtResource("1_fj7sv")]
 
@@ -34,3 +49,13 @@ shape = SubResource("BoxShape3D_ldwkk")
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." index="4"]
 transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0, 0, 0)
 mesh = SubResource("TorusMesh_x5prv")
+
+[node name="GrabPointHandLeft" parent="." index="5" instance=ExtResource("2_x5prv")]
+transform = Transform3D(0.3185457, 0, -0.9479075, 0, 1, 0, 0.9479075, 0, 0.3185457, -0.13057336, 0.06211233, 0)
+snap_hand = false
+hand_pose = SubResource("Resource_ye4w3")
+
+[node name="GrabPointHandRight" parent="." index="6" instance=ExtResource("4_at21k")]
+transform = Transform3D(0.9211243, 0, 0.38926864, 0, 1, 0, -0.38926864, 0, 0.9211243, 0.13837416, 0.061108902, 0)
+snap_hand = false
+hand_pose = SubResource("Resource_sxjka")
