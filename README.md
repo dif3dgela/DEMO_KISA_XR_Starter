@@ -154,7 +154,9 @@ Disable the snapping option in the inspector (snap hand), don't really know why 
 
 
 
+## Try additional movement functions to the XRController3D class
 
+There are a lot of built-in functions to increase functionality of the controllers, just try adding / removing different functions instantiating functions at will
 
 
 
