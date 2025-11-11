@@ -150,6 +150,7 @@ Add pickable elements to the main scene in order to test grabbing.
 Grab points for objects can also be added.
 Create a new inherited scene derived from the previous pickable object, and add GrabPointHandLeft and GrabPointHandRight nodes to it. 
 You can visualize the grabbing hand and tune it as desired. For the task you will need to create a new XRToolsHandPose attribute a load a new animation available in hands/animations.
+Disable the snapping option in the inspector, don't really know why it does not work.
 
 
 
