@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://b660p8d27rgim"]
+[gd_scene load_steps=10 format=3 uid="uid://b660p8d27rgim"]
 
 [ext_resource type="PackedScene" uid="uid://bq86r4yll8po" path="res://addons/godot-xr-tools/hands/scenes/lowpoly/left_fullglove_low.tscn" id="1_rok6f"]
 [ext_resource type="PackedScene" uid="uid://bl2nuu3qhlb5k" path="res://addons/godot-xr-tools/functions/movement_direct.tscn" id="2_dfor6"]
@@ -6,6 +6,13 @@
 [ext_resource type="PackedScene" uid="uid://fiul51tsyoop" path="res://addons/godot-xr-tools/functions/function_teleport.tscn" id="3_07e33"]
 [ext_resource type="PackedScene" uid="uid://diyu06cw06syv" path="res://addons/godot-xr-tools/player/player_body.tscn" id="4_07e33"]
 [ext_resource type="PackedScene" uid="uid://b6bk2pj8vbj28" path="res://addons/godot-xr-tools/functions/movement_turn.tscn" id="4_kugsp"]
+[ext_resource type="PackedScene" uid="uid://c2q5phg8w08o" path="res://addons/godot-xr-tools/functions/movement_jump.tscn" id="6_44wbj"]
+[ext_resource type="Script" uid="uid://vlv4kyyxw2gh" path="res://addons/godot-xr-tools/overrides/ground_physics_settings.gd" id="8_ib2yg"]
+
+[sub_resource type="Resource" id="Resource_44wbj"]
+script = ExtResource("8_ib2yg")
+jump_velocity = 10.0
+metadata/_custom_type_script = "uid://vlv4kyyxw2gh"
 
 [node name="XROrigin3D" type="XROrigin3D"]
 
@@ -30,4 +37,8 @@ tracker = &"right_hand"
 [node name="MovementTurn" parent="Right_XRController3D/RightHand" instance=ExtResource("4_kugsp")]
 turn_mode = 1
 
+[node name="MovementJump" parent="Right_XRController3D/RightHand" instance=ExtResource("6_44wbj")]
+jump_button_action = "ax_button"
+
 [node name="PlayerBody" parent="." instance=ExtResource("4_07e33")]
+physics = SubResource("Resource_44wbj")

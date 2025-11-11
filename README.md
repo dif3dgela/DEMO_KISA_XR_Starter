@@ -120,11 +120,36 @@ You can check now all the additional configuration shown in the terminal when st
 ## Teleportation
 
 Teleportation is a very handy movement in XR to move fast, its implementation in Godot is very simple.
+Teleportation in Godot is provided by a function that must be instantiated in the controller we want to use to teleport.
+Add a child node FunctionTeleport to the XRController3D node that will be used to teleport.
 
 
+## Jump in VR
+
+Jump is another function implemented by functions, its implementation in Godot is very simple.
+Jumps in Godot are provided by a function that must be instantiated in the controller we want to use to jump.
+Add a child node FunctionJump to the XRController3D node that will be used to jump.
+Just be careful not to overlap buttons of the controllers for different actions. 
+Let's say we want to jump by pressing A (ax_button) on the XRController3D, then instantiate the MovementJump on the controller and select the trigger key.
+Triggers keys can be checked on the XR action map menu, on the bottom side of Godot editor.
+
+To edit the jump strength, you may need to inspect the PlayerBody3D node and create a physics instance.
+Among those options jump strength can be tuned (jump velocity and jump max slope).
 
 
+## Picking up objects
 
+The functionality to pick up objects is also provided by instantiating a function from Godot XR Tools.
+For both XRController3D nodes instantiate the FunctionPickup node.
+
+To debug the experience, obviously we will need to create some pickable objects derived from the pickable generic scene from Godot XR Tools.
+For that task, create a inherited pickable scene (addons/godot-xr-tools/objects/pickable.tscn) that will be composed of the following hierarchical elements: 
+PickableObject->CollisionShape3D->MeshInstance3D and create some funny shapes to pick-up. Do not forget to provide the collision shape or the object will not interact with grabbing.
+Add pickable elements to the main scene in order to test grabbing.
+
+Grab points for objects can also be added.
+Create a new inherited scene derived from the previous pickable object, and add GrabPointHandLeft and GrabPointHandRight nodes to it. 
+You can visualize the grabbing hand and tune it as desired. For the task you will need to create a new XRToolsHandPose attribute a load a new animation available in hands/animations.
 
 
 
