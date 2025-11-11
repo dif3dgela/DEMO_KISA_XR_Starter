@@ -1,10 +1,11 @@
-[gd_scene load_steps=9 format=3 uid="uid://byyq5r4vpj1rw"]
+[gd_scene load_steps=10 format=3 uid="uid://byyq5r4vpj1rw"]
 
 [ext_resource type="PackedScene" uid="uid://frt16h24dxdh" path="res://floor.tscn" id="1_ig7tw"]
 [ext_resource type="PackedScene" uid="uid://b660p8d27rgim" path="res://XRRig.tscn" id="2_0xm2m"]
 [ext_resource type="PackedScene" uid="uid://clc5dre31iskm" path="res://addons/godot-xr-tools/xr/start_xr.tscn" id="2_1bvp3"]
 [ext_resource type="PackedScene" path="res://table.tscn" id="4_1bvp3"]
 [ext_resource type="PackedScene" uid="uid://ccaxsdo2l7gxt" path="res://pickableRedBox.tscn" id="5_lquwl"]
+[ext_resource type="PackedScene" uid="uid://dm11pb7jgwrua" path="res://pickableGreenTOrus.tscn" id="6_7mycd"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_h2yge"]
 sky_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
@@ -50,3 +51,12 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.39314237, 0.5626757, 0)
 
 [node name="PickableObject4" parent="table" instance=ExtResource("5_lquwl")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.14467947, 0.5626757, 0)
+
+[node name="PickableObject5" parent="table" instance=ExtResource("6_7mycd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.2450316, 0.538259, 0)
+
+[node name="PickableObject6" parent="table" instance=ExtResource("6_7mycd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.6781311, 0.538259, 0)
+
+[node name="PickableObject7" parent="table" instance=ExtResource("6_7mycd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.45516753, 0.6729475, 0)
