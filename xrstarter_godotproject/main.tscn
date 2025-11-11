@@ -1,8 +1,9 @@
-[gd_scene load_steps=7 format=3 uid="uid://byyq5r4vpj1rw"]
+[gd_scene load_steps=8 format=3 uid="uid://byyq5r4vpj1rw"]
 
 [ext_resource type="PackedScene" uid="uid://frt16h24dxdh" path="res://floor.tscn" id="1_ig7tw"]
 [ext_resource type="PackedScene" uid="uid://b660p8d27rgim" path="res://XRRig.tscn" id="2_0xm2m"]
 [ext_resource type="PackedScene" uid="uid://clc5dre31iskm" path="res://addons/godot-xr-tools/xr/start_xr.tscn" id="2_1bvp3"]
+[ext_resource type="PackedScene" path="res://table.tscn" id="4_1bvp3"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_h2yge"]
 sky_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
@@ -33,3 +34,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.05, 0)
 
 [node name="XROrigin3D" parent="." instance=ExtResource("2_0xm2m")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.978935, 0)
+
+[node name="table" parent="." instance=ExtResource("4_1bvp3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.57554984, 0)
