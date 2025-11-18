@@ -159,6 +159,33 @@ Disable the snapping option in the inspector (snap hand), don't really know why 
 There are a lot of built-in functions to increase functionality of the controllers, just try adding / removing different functions instantiating functions at will
 
 
+## Exporting to android / Meta Quest 2/3
+
+Exporting the app to native android is a bit of a complex process (Don't worry it can be done! we did it, and so can you!). Please read and follow the latest official documentation.
+
+Requirements are to install the following (do not install linux distribution packages, they tend to be outdated):
+
+- install jdk-17 (tested with distribution openjdk17)
+- install android related things: easiest is to do the full install of android studio, and then relevant tools and sdk. Go to Settings -> Language & Frameworks -> install everything from SDK tools, and latest from SDK platforms
+- install adb
+
+Then move to Godot
+
+- Install the export templates from Godot (Editor -> manage export templates)
+- Install the android templates from Godot (Project -> android build templates)
+
+Finally export to android:
+
+- Build with Graddle
+- Check OpenXR backed
+- Select architecture arm-64
+- Enable Meta plugin (vendors library must be installed)
+- 
+
+
+Check available usb devices with sudo adb devices
+
+
 
 
 
