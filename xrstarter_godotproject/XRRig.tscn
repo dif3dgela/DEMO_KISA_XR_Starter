@@ -22,40 +22,40 @@ metadata/_custom_type_script = "uid://vlv4kyyxw2gh"
 
 [node name="XRCamera3D" type="XRCamera3D" parent="."]
 
+[node name="MovementGlide" parent="." instance=ExtResource("5_2amch")]
+
 [node name="Left_XRController3D" type="XRController3D" parent="."]
 tracker = &"left_hand"
 
 [node name="LeftHand" parent="Left_XRController3D" instance=ExtResource("1_rok6f")]
 
-[node name="MovementDirect" parent="Left_XRController3D/LeftHand" instance=ExtResource("2_dfor6")]
+[node name="MovementDirect" parent="Left_XRController3D" instance=ExtResource("2_dfor6")]
 strafe = true
 
-[node name="FunctionTeleport" parent="Left_XRController3D/LeftHand" instance=ExtResource("3_07e33")]
+[node name="FunctionTeleport" parent="Left_XRController3D" instance=ExtResource("3_07e33")]
 player_radius = 0.25
 
-[node name="FunctionPickup" parent="Left_XRController3D/LeftHand" instance=ExtResource("4_ib2yg")]
+[node name="FunctionPickup" parent="Left_XRController3D" instance=ExtResource("4_ib2yg")]
 grab_distance = 0.1
-
-[node name="MovementGlide" parent="Left_XRController3D/LeftHand" instance=ExtResource("5_2amch")]
 
 [node name="Right_XRController3D" type="XRController3D" parent="."]
 tracker = &"right_hand"
 
 [node name="RightHand" parent="Right_XRController3D" instance=ExtResource("2_uffsj")]
 
-[node name="MovementTurn" parent="Right_XRController3D/RightHand" instance=ExtResource("4_kugsp")]
+[node name="MovementTurn" parent="Right_XRController3D" instance=ExtResource("4_kugsp")]
 turn_mode = 1
 
-[node name="MovementJump" parent="Right_XRController3D/RightHand" instance=ExtResource("6_44wbj")]
+[node name="MovementJump" parent="Right_XRController3D" instance=ExtResource("6_44wbj")]
 jump_button_action = "ax_button"
 
-[node name="FunctionPickup" parent="Right_XRController3D/RightHand" instance=ExtResource("4_ib2yg")]
+[node name="FunctionPickup" parent="Right_XRController3D" instance=ExtResource("4_ib2yg")]
 grab_distance = 0.1
 
-[node name="MovementCrouch" parent="Right_XRController3D/RightHand" instance=ExtResource("8_bdelf")]
+[node name="MovementCrouch" parent="Right_XRController3D" instance=ExtResource("8_bdelf")]
 crouch_button_action = "by_button"
 
-[node name="MovementGlide" parent="Right_XRController3D/RightHand" instance=ExtResource("5_2amch")]
+[node name="MovementGlide" parent="Right_XRController3D" instance=ExtResource("5_2amch")]
 
 [node name="PlayerBody" parent="." instance=ExtResource("4_07e33")]
 physics = SubResource("Resource_44wbj")

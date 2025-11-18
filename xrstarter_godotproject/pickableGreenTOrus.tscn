@@ -52,10 +52,8 @@ mesh = SubResource("TorusMesh_x5prv")
 
 [node name="GrabPointHandLeft" parent="." index="5" instance=ExtResource("2_x5prv")]
 transform = Transform3D(0.3185457, 0, -0.9479075, 0, 1, 0, 0.9479075, 0, 0.3185457, -0.13057336, 0.06211233, 0)
-snap_hand = false
 hand_pose = SubResource("Resource_ye4w3")
 
 [node name="GrabPointHandRight" parent="." index="6" instance=ExtResource("4_at21k")]
 transform = Transform3D(0.9211243, 0, 0.38926864, 0, 1, 0, -0.38926864, 0, 0.9211243, 0.13837416, 0.061108902, 0)
-snap_hand = false
 hand_pose = SubResource("Resource_sxjka")
