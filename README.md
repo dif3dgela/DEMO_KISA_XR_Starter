@@ -92,45 +92,111 @@ In this project, you’ll typically:
 
 ## Hands on XR
 
-1) Godot engine related configurations
-- Enable XR in project settings 
-- Enable XR shaders in project seetings
-- Restart
+This section prepares the project for XR using **OpenXR** and the **Godot XR Tools** ecosystem. The goal is to (1) enable XR support in the engine, (2) install the required addons, and (3) activate the plugins so Godot can use them at runtime.
 
-2) Incorporating libraries
-- Add XR toolkit libraries for Godot XR in Asset Library:
-   - Godot OpenXR Vendors plugin (vendors)
-   - Godot XR tools for Godot (godot-xr-tools)
-- Restart
+### 1) Godot engine configurations (XR project settings)
 
-3) Enable libraries
-- Godot does not enable libraries by default
-- Go to project settings, check the plugins tab and enable Godot-XR-Tools
-- Restart
+1. Open **Project → Project Settings**.
+2. Enable XR support:
+   - Search for **XR** and enable **XR / OpenXR**-related options as needed for your Godot version.
+3. Enable XR shaders:
+   - Search for **XR shaders** and enable the XR shader option (required for correct rendering on XR runtimes).
+4. **Restart Godot** after changing these settings.
 
-- Explore the assets library and check all the content from the libraries
+> Notes:
+> - Godot applies some XR and rendering changes only after restarting the editor.
+> - If you later change renderer settings or XR-related rendering settings, restart again to avoid “it should work but doesn’t” situations.
+
+### 2) Incorporating libraries (Asset Library)
+
+Godot XR workflows typically use community addons for common interaction patterns and vendor extensions.
+
+1. Go to **AssetLib** (top tab in the editor).
+2. Search and install the following addons:
+   - **Godot OpenXR Vendors plugin** (often named *OpenXR Vendors* or similar)  
+     This provides vendor-specific OpenXR extensions (e.g., Meta features) when available.
+   - **Godot XR Tools** (*godot-xr-tools*)  
+     This provides reusable XR building blocks (“functions”) such as locomotion, grabbing, hand poses, and helper nodes.
+
+3. After installing, **restart Godot**.
+
+### 3) Enable libraries (Plugins tab)
+
+Installing an addon does not always enable it automatically.
+
+1. Go to **Project → Project Settings → Plugins**.
+2. Enable:
+   - **Godot XR Tools** (toggle it to *On*)
+   - (Optionally) any vendor plugin you intend to use (e.g., Meta extensions via the Vendors plugin)
+
+3. **Restart Godot** after enabling plugins.
+
+### 4) Explore what you installed
+
+Before you start wiring things into your own scenes, take a few minutes to explore:
+
+- The `addons/` folder (FileSystem panel) to see what each library provides.
+- **XR Tools** scenes and prefabs (hands, movement, teleport, pickup, etc.).
+- Any demo scenes, example assets, and documentation files included with the addons.
+
+This will make it easier to recognize what to **instantiate as child scenes** later (instead of re-building features from scratch).
+
 
 
 ## Create the floor Scene
 
-Create the following hierarchy: StaticBody3D -> CollisionShape3D -> MeshInstance3D and add a cube mesh of the desired size. 
+Create the following hierarchy: `StaticBody3D → CollisionShape3D → MeshInstance3D` and add a **BoxMesh** (cube) of the desired size.
 
-This will be the floor for our XR experience. Add it to the main scene, either as a new subscene or directly as nodes in the main scene
+This will be the floor for our XR experience. Add it to the main scene, either as a new subscene or directly as nodes in the main scene.
 
-Move the floor to -0.05 on y, so that the XRRig will be on top of it
+Move the floor to `y = -0.05`, so that the XRRig will be on top of it.
 
+> **Tip (floor textures):** If you want a clear tactical reference texture for scale and orientation (grid lines, tiles, etc.), you can generate one quickly using the **Texture Grid Generator**:  
+> [https://wahooney.itch.io/texture-grid-generator](https://wahooney.itch.io/texture-grid-generator)
 
 ## Create the XRRig Scene
 
-Create a new scene that will hold the XRRig.
+Create a new scene that will contain the player XR rig (origin, camera, and controllers).
 
-The base node must be XROrigin3D and must have a XRCamera3D as a child and also 2 XRController3D nodes
+### 1) Build the XRRig node hierarchy
 
-For the XRController3D assign correct tracker to each hand
+1. Create a **new scene**.
+2. Set the root node to **`XROrigin3D`**.
+3. Add the following child nodes under `XROrigin3D`:
+   - **`XRCamera3D`**
+   - **`XRController3D`** (Left hand)
+   - **`XRController3D`** (Right hand)
 
-Add the XR rig scene to the main scene and place it above the floor
+Your scene tree should look like this:
 
-Now we will add a script to the main scene to prepare the scene for VR. This is a näive approach that will be updated afterwards. Add the following code to the main scene (attach script)
+- `XROrigin3D`
+  - `XRCamera3D`
+  - `XRController3D` (Left)
+  - `XRController3D` (Right)
+
+Save this scene as something like `xr_rig.tscn` (name it consistently with your project structure).
+
+### 2) Assign the correct trackers (left/right)
+
+For each `XRController3D`, set the tracker/hand assignment in the Inspector:
+
+- Left controller: set it to **Left Hand**
+- Right controller: set it to **Right Hand**
+
+(Exact property names can vary slightly by Godot version, but you are looking for a field that identifies the controller as left/right.)
+
+### 3) Instance the rig into the main scene
+
+1. Open `main.tscn`.
+2. **Instantiate** the XR rig scene (`xr_rig.tscn`) as a child of your main root node.
+3. Place the rig slightly above the floor so you start standing on it (you can tweak the height later).
+
+### 4) Naive XR initialization script (temporary)
+
+Next, we’ll add a small script to `main.tscn` to start an OpenXR session.  
+This is a **naive** approach and we will replace/refine it later using the XR Tools startup helper node.
+
+Attach a script to the root node of `main.tscn` and add the following code:
 
 ```
 extends Node3D
@@ -151,109 +217,308 @@ func _ready():
     print("OpenXR is not initialized. Please check HMD is working correctly :(")
 ```
 
-At this point, we are in the position to test our experience on the HMD device. But we will not see much as we have not added 3D models for the hands.
-Let's add some hand models by instantiating a child scene for the godot XR toolkit library.
-Hands can be found under godot-xr-tools/hands path.
+> For the full XR workflow, concepts, and engine-specific details, refer to the official Godot XR docs:  
+> - [Godot XR documentation](https://docs.godotengine.org/en/stable/tutorials/xr/index.html)
 
-Add a low poly hand under the left controller and another one under the right controller
+At this point, we are in a position to test the experience on the HMD. However, you won’t see much yet because the controllers don’t have any visible models attached.
+
+### Add hand models (XR Tools)
+
+We’ll use the ready-made hand scenes from **Godot XR Tools**:
+
+1. In the **FileSystem** panel, locate the XR Tools hands under:
+   - `addons/godot-xr-tools/hands/`
+
+2. For the **left** `XRController3D`:
+   - **Instantiate** a low-poly hand scene as a child of the left controller (e.g., the left low-poly hand from the hands folder).
+
+3. For the **right** `XRController3D`:
+   - **Instantiate** the corresponding low-poly hand scene as a child of the right controller.
+
+Your rig should now look roughly like this:
+
+- `XROrigin3D`
+  - `XRCamera3D`
+  - `XRController3D` (Left)
+    - `…Hand…` (low poly)
+  - `XRController3D` (Right)
+    - `…Hand…` (low poly)
+
+Run on your headset again: you should now see the hands/controllers moving with your tracked input.
 
 
 ## Add some lighting
 
-Hurrey! Hands and Camera3D should be moving now. The repo has only been tested on Meta Quest 2 and Meta Quest 3 though. Check possible problems for Pico and other devices.
-Let's add some lighting to improve the scene.
+Hooray! Your hands and `XRCamera3D` should be moving now. This repo has been tested on **Meta Quest 2** and **Meta Quest 3**; for other headsets (e.g., Pico), you may need to check OpenXR runtime/device-specific compatibility and plugin support.
 
-Adding simple lighting in Godot is trivial. Go to Sun and environment settings and select add sun and add environment to it.
-Note that a DirectionalLight3D and a WorldEnvironment node will be added in the main.tscn main scene.
+Let’s add some basic lighting to make the scene readable.
 
-## Let's move
+### Add a Sun + Environment
 
-In order to be able to move we just need to incorporate some functionality coded in the functions of the Godot-XR-Tools library.
-Go the the scene in which we have defined the XRRig and instantiate a child scene for the left and right controller.
+In Godot, a simple setup is usually enough:
 
-Movement is added instantiating a child scene called "MovementDirect", for instance we can add this to the left controller node.
-Inspect the properties of the movement, try alternating strafe for instance.
+1. Open `main.tscn`.
+2. In the top toolbar, go to **Sun & Environment**.
+3. Click:
+   - **Add Sun** → creates a `DirectionalLight3D`
+   - **Add Environment** → creates a `WorldEnvironment`
 
-Please note that this instantiation needs to incorporate a PlayerBody node to the scene, if not please restart Godot.
+After this, your `main.tscn` scene tree should include something like:
 
-Instantiate movement turn scene as a subscene for the right controller.
+- `DirectionalLight3D`
+- `WorldEnvironment`
+
+You can tweak intensity, rotation (sun direction), and environment settings later, but even the defaults should make the scene much clearer in-headset.
 
 
-## Let's refine
+## Let’s move
 
-Now that our VR experience is getting serious, let's stick to the Godot XR Tools library for the preparation of the VR scene.
-Remove our script coded previously (comment or detach the script), and instantiate the StartXR node in the main scene.
-This will take care of XR preparations in higher detail for us.
-You can check now all the additional configuration shown in the terminal when starting an XR Session
+To add locomotion, we’ll reuse the ready-made **movement functions** provided by **Godot XR Tools**. These are packaged as scenes you can **instantiate as children** under each controller.
+
+### 1) Add XR Tools movement scenes to the controllers
+
+1. Open your XR rig scene (`xr_rig.tscn`).
+2. Select the **left** `XRController3D` node and **instantiate** the XR Tools movement scene:
+   - **`MovementDirect`** (from the XR Tools movement/function scenes)
+
+This adds joystick/thumbstick-based movement. Once instanced:
+
+- Inspect the `MovementDirect` node in the Inspector
+- Try options such as **strafe** (side movement) or other movement settings depending on the template
+
+3. Select the **right** `XRController3D` node and **instantiate** a turning movement scene:
+   - e.g., **`MovementTurn`** (or the equivalent XR Tools turning scene available in your version)
+
+This adds right-stick turning (snap or smooth depending on settings).
+
+### 2) Make sure `PlayerBody` is present
+
+XR Tools movement typically requires a **player body** node in the rig setup (often named `PlayerBody` / `PlayerBody3D` depending on the XR Tools version).
+
+- If adding `MovementDirect` doesn’t automatically add or hook into a `PlayerBody`, try **restarting Godot** and re-check the scene.
+- Confirm your rig contains the required player body node so locomotion has something to move.
+
+After this, running on the headset should allow:
+- **move** using the left controller input (direct movement)
+- **turn** using the right controller input (turn movement)
+
+
+
+## Let’s refine
+
+Now that the VR experience is getting serious, we’ll rely on **Godot XR Tools** to handle XR startup in a cleaner and more robust way.
+
+### Replace the “naive” XR init script with `StartXR`
+
+1. Open `main.tscn`.
+2. **Disable** the temporary XR initialization script you added earlier:
+   - either **comment it out**, or **detach the script** from the root node.
+3. Add XR Tools startup:
+   - **Instantiate** the XR Tools node/scene called **`StartXR`** into `main.tscn` (as a child of the root node).
+
+`StartXR` takes care of XR session setup and related configuration in more detail than our minimal script (e.g., initialization flow, logging, and XR-specific viewport preparation).
+
+### Verify in the output/terminal
+
+Run the project again and look at the editor output / terminal logs.  
+You should see additional XR session configuration messages printed when the XR session starts—this helps confirm XR Tools is now managing startup correctly.
+
 
 
 ## Teleportation
 
-Teleportation is a very handy movement in XR to move fast, its implementation in Godot is very simple.
-Teleportation in Godot is provided by a function that must be instantiated in the controller we want to use to teleport.
-Add a child node FunctionTeleport to the XRController3D node that will be used to teleport.
+Teleportation is a very handy locomotion method in XR for fast movement with minimal discomfort. In **Godot XR Tools**, teleport is implemented as a **function scene/node** that you add to the controller you want to use.
+
+### Add `FunctionTeleport` to a controller
+
+1. Open your XR rig scene (`xr_rig.tscn`).
+2. Decide which controller will handle teleportation (commonly the **right** controller).
+3. Select that `XRController3D` node and **instantiate** the XR Tools teleport function as a child:
+   - **`FunctionTeleport`**
+
+Your controller subtree should end up roughly like:
+
+- `XRController3D` (e.g., Right)
+  - `FunctionTeleport`
+
+Run the project on the headset and test teleportation using the controller input configured by XR Tools (you can adjust bindings and behavior via the node’s Inspector properties and the XR Action Map).
 
 
 ## Jump in VR
 
-Jump is another function implemented by functions, its implementation in Godot is very simple.
-Jumps in Godot are provided by a function that must be instantiated in the controller we want to use to jump.
-Add a child node FunctionJump to the XRController3D node that will be used to jump.
-Just be careful not to overlap buttons of the controllers for different actions. 
-Let's say we want to jump by pressing A (ax_button) on the XRController3D, then instantiate the MovementJump on the controller and select the trigger key.
-Triggers keys can be checked on the XR action map menu, on the bottom side of Godot editor.
+Jumping is another locomotion feature provided by **Godot XR Tools** as a function you attach to a controller.
 
-To edit the jump strength, you may need to inspect the PlayerBody3D node and create a physics instance.
-Among those options jump strength can be tuned (jump velocity and jump max slope).
+### Add jump to a controller
+
+1. Open your XR rig scene (`xr_rig.tscn`).
+2. Choose which `XRController3D` will control jumping.
+3. **Instantiate** the XR Tools jump function as a child of that controller:
+   - `FunctionJump` (or the equivalent jump function scene in your XR Tools version)
+
+> **Button conflicts:** Be careful not to bind multiple actions to the same controller button (e.g., teleport + jump on the same input).
+
+### Example: bind jump to **A** (`ax_button`)
+
+If you want to jump by pressing **A** (often exposed as `ax_button`):
+
+1. Select the jump function node you added (e.g., `FunctionJump`).
+2. In the Inspector, set the **trigger / activation input** to `ax_button` (or the matching action in your Action Map).
+3. If you’re unsure which inputs are available, open the **XR Action Map** panel (bottom area of the editor) and inspect the actions/bindings.
+
+> Depending on XR Tools version, the node might be named `FunctionJump` while the underlying movement behavior may appear as `MovementJump` or similar. Use the node’s Inspector to set the activation input either way.
+
+### Tune jump strength (Player body physics)
+
+Jump behavior is typically applied through the player body node (often `PlayerBody3D`):
+
+1. Locate the player body in your rig (e.g., `PlayerBody` / `PlayerBody3D`).
+2. Ensure it has the required **physics/character configuration** (some setups require creating or enabling a physics instance/component).
+3. Tune jump-related parameters such as:
+   - **Jump velocity / strength**
+   - **Max slope** (affects how jumps and grounding behave on inclines)
+
+After tuning, test in-headset and adjust until the jump feels comfortable and predictable.
 
 
 ## Picking up objects
 
-The functionality to pick up objects is also provided by instantiating a function from Godot XR Tools.
-For both XRController3D nodes instantiate the FunctionPickup node.
+Object grabbing in **Godot XR Tools** is done by adding a pickup “function” to your controllers, and making objects **pickable** by inheriting from the XR Tools pickable template.
 
-To debug the experience, obviously we will need to create some pickable objects derived from the pickable generic scene from Godot XR Tools.
-For that task, create a inherited pickable scene (addons/godot-xr-tools/objects/pickable.tscn) that will be composed of the following hierarchical elements: 
-PickableObject->CollisionShape3D->MeshInstance3D and create some funny shapes to pick-up. Do not forget to provide the collision shape or the object will not interact with grabbing.
-Add pickable elements to the main scene in order to test grabbing.
+### 1) Enable grabbing on both controllers
 
-Grab points for objects can also be added.
-Create a new inherited scene derived from the previous pickable object, and add GrabPointHandLeft and GrabPointHandRight nodes to it. 
-You can visualize the grabbing hand and tune it as desired. For the task you will need to create a new XRToolsHandPose attribute a load a new animation available in hands/animations.
-Disable the snapping option in the inspector (snap hand), don't really know why it does not work.
+1. Open your XR rig scene (`xr_rig.tscn`).
+2. For **each** `XRController3D` (Left and Right), **instantiate** the XR Tools pickup function as a child:
+   - `FunctionPickup`
+
+You should end up with something like:
+
+- `XRController3D` (Left)
+  - `FunctionPickup`
+- `XRController3D` (Right)
+  - `FunctionPickup`
+
+### 2) Create a custom pickable object (inherited scene)
+
+To test grabbing, we need objects that can be picked up.
+
+1. In the FileSystem, locate the XR Tools pickable template scene:
+   - `addons/godot-xr-tools/objects/pickable.tscn`
+
+2. Create an **inherited scene** from it:
+   - Right click `pickable.tscn` → **New Inherited Scene**
+   - Save it as something like `pickable_custom.tscn`
+
+3. In your inherited scene, build/confirm a simple visible + collidable hierarchy (example):
+
+- `PickableObject`
+  - `CollisionShape3D`
+  - `MeshInstance3D`
+
+4. Assign:
+   - A mesh (cube, sphere, “funny shapes”, etc.) to `MeshInstance3D`
+   - A matching collision shape to `CollisionShape3D`
+
+> **Important:** If you forget the `CollisionShape3D`, the object won’t properly interact with grabbing.
+
+5. Instance a few of these pickable objects into `main.tscn` so you can test grabbing in the headset.
+
+### 3) Add grab points (optional, for better hand placement)
+
+Grab points allow you to control how the hand aligns when grabbing an object.
+
+1. Create another **inherited scene** derived from your custom pickable object (e.g., `pickable_with_grabpoints.tscn`).
+2. Add:
+   - `GrabPointHandLeft`
+   - `GrabPointHandRight`
+
+3. To visualize and tune the grabbing pose, configure a hand pose:
+   - Create a new `XRToolsHandPose` resource/attribute
+   - Load an animation from the XR Tools hand animations folder, typically under:
+     - `addons/godot-xr-tools/hands/animations/`
+
+4. In the GrabPoint inspector settings:
+   - Disable **Snap Hand** (`snap_hand`) if snapping is causing issues in your setup.
+
+Now you can test:
+- natural grabbing with `FunctionPickup`
+- improved alignment using `GrabPointHandLeft/Right` and hand pose animations
 
 
+## Try additional movement functions on `XRController3D`
 
-## Try additional movement functions to the XRController3D class
+Godot XR Tools provides many extra **function scenes** you can attach to an `XRController3D` to extend what the controller can do (locomotion, interaction helpers, UI pointers, etc.). The workflow is always the same:
 
-There are a lot of built-in functions to increase functionality of the controllers, just try adding / removing different functions instantiating functions at will
+1. Select an `XRController3D` node (Left or Right).
+2. **Instantiate** an XR Tools function scene as a **child** of that controller.
+3. Configure it in the Inspector (inputs, behavior, parameters).
+4. Test in-headset, then iterate (swap functions in/out as needed).
 
+### Where to find functions
 
-## Exporting to android / Meta Quest 2/3
+Browse the XR Tools addon folder in the FileSystem panel:
 
-Exporting the app to native android is a bit of a complex process (Don't worry it can be done! we did it, and so can you!). Please read and follow the latest official documentation.
+- `addons/godot-xr-tools/`
 
-Requirements are to install the following (do not install linux distribution packages, they tend to be outdated):
+Look for folders that contain “functions” (commonly named `functions/`, `movement/`, `objects/`, etc., depending on XR Tools version). Most reusable controller features are provided as scenes you can instance.
 
-- install jdk-17 (tested with distribution openjdk17)
-- install android related things: easiest is to do the full install of android studio, and then relevant tools and sdk. Go to Settings -> Language & Frameworks -> install everything from SDK tools, and latest from SDK platforms
-- install adb
+### Suggested experiments
 
-Then move to Godot
+Try mixing and matching features to understand how XR Tools composes behavior:
 
-- Install the export templates from Godot (Editor -> manage export templates)
-- Install the android templates from Godot (Project -> android build templates)
+- Swap **direct movement** for **teleport-only** locomotion and compare comfort
+- Try different **turning** styles (snap vs smooth if available)
+- Combine **pickup** with different grab-point setups and hand poses
+- Adjust movement parameters (speed, acceleration, deadzones) and see how it feels in XR
 
-Finally export to android:
-
-- Build with Graddle
-- Check OpenXR backed
-- Select architecture arm-64
-- Enable Meta plugin (vendors library must be installed)
-- 
+> Tip: Add one function at a time and test. If something breaks (missing dependencies like `PlayerBody`), undo the last change, restart Godot, and re-check the scene tree for required nodes.
 
 
-Check available usb devices with sudo adb devices
+## Exporting to Android / Meta Quest 2/3
+
+Exporting to Android (and deploying to Meta Quest devices) has a few moving parts. Don’t worry—once your toolchain is set up, iteration becomes straightforward. **Always follow the latest official Godot documentation** for Android export, as requirements can change between versions.
+
+### Requirements (install on your machine)
+
+> Avoid installing Android tooling from Linux distribution packages when possible—they can be outdated compared to what Godot expects.
+
+- **JDK 17**
+  - Install **JDK 17** (e.g., `openjdk-17` on many systems).
+- **Android SDK + tools**
+  - Easiest path: install **Android Studio**, then install the required SDK components:
+    - Android Studio → **Settings** → **Language & Frameworks** → **Android SDK**
+    - Install the latest required items from **SDK Platforms**
+    - Install the relevant items from **SDK Tools** (platform-tools are essential)
+- **ADB**
+  - Install Android Debug Bridge (**adb**) (often included via Android SDK Platform-Tools)
+
+### Godot setup
+
+1. **Install export templates**
+   - **Editor → Manage Export Templates** → install matching templates for your Godot version
+2. **Install Android build templates**
+   - **Project → Install Android Build Template**
+
+### Export settings (Android / Quest)
+
+1. Go to **Project → Export…**
+2. Add or select the **Android** export preset.
+3. Configure the preset:
+   - Enable **Gradle Build** (Build with Gradle)
+   - Ensure **OpenXR** is enabled for XR builds (OpenXR backend)
+   - Select **arm64-v8a** (ARM 64-bit) architecture
+   - If targeting Meta Quest features, enable the **Meta / Vendors** plugin support
+     - (Requires the OpenXR Vendors plugin to be installed and enabled)
+
+### Deploy & verify device connection
+
+Before exporting/running to device, confirm your headset is visible over USB:
+
+```bash
+adb devices
+```
+
+On Linux you may need sudo (depending on your setup), and you may need proper udev rules for Android devices.
+If your headset shows up in the list, you’re ready to export and install the APK to the device.
 
 
 
