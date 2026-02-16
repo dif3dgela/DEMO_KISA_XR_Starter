@@ -1,24 +1,94 @@
 # TUTORIAL_SCHELETON_KISA_XR_Starter
 
-[todo] Brief description of the aim of the repo in the context of
+This repository is a **starter project for XR (VR/AR) development in Godot**, designed to support hands-on work in the context of the **KISA Master** and the accompanying **XR lecture/lab sessions**. The goal is to provide a clean, minimal baseline that gets you from new project to a working **room-scale XR scene** with an **XR rig, controller tracking, basic locomotion, and interaction**—and then gradually refine the setup using established community tooling.
 
-- KISA master
-- XR lecture
+The project uses the **Godot Engine**, a free and open-source game engine that supports both 2D and 3D development and provides a full editor workflow (scenes, nodes, scripting, export pipelines). For XR, we rely on **OpenXR**, the industry standard for cross-vendor XR runtimes, and Godot’s XR ecosystem plugins and toolkits to accelerate development of common interaction patterns (hands/controllers, teleportation, grabbing, movement, etc.).
 
+### What you will build
 
-[todo] Brief description of Godot game engine and related work tutorials / links
+By following this README, you will:
 
+- Set up a Godot 3D project configured for XR (targeting standalone headsets like Meta Quest 2/3)
+- Create a **main 3D scene** and modular sub-scenes (floor, rig, interactables)
+- Add and configure an **XRRig** (origin, camera, controllers, hand models)
+- Use **Godot XR Tools** functions for locomotion (snap/turn, direct movement, teleportation, jump)
+- Implement **object interaction** (pickup/grab) and experiment with additional XR capabilities
+- Export the project to **Android** for deployment on standalone XR headsets
 
+### Godot and XR references (official + key repos)
+
+**Godot (official)**  
+- [Godot website](https://godotengine.org)  
+- [Godot documentation](https://docs.godotengine.org)  
+- [Godot source code (GitHub)](https://github.com/godotengine/godot)  
+
+**XR in Godot (core ecosystem)**  
+- [Godot XR Tools](https://github.com/GodotVR/godot-xr-tools) — toolkit used in this tutorial  
+- [Godot OpenXR Vendors plugin](https://github.com/GodotVR/godot-openxr-vendors) — vendor extensions (e.g., Meta)  
+- [Godot XR community/org](https://github.com/GodotVR)  
+
+**OpenXR (standard)**  
+- [Khronos OpenXR overview/spec](https://www.khronos.org/openxr/)  
 
 ## Hands on Godot
 
-- Link to tutorials
+This section gets the project structure in place and covers the core Godot concepts you’ll use throughout the XR part: **rendering setup**, **scenes vs. nodes**, and **how to structure your project with reusable sub-scenes**.
 
-- Forward vs mobile vs compatibility. Let's use mobile for Quest 2 / Quest 3
+### Godot official “first project” tutorials
 
-- Create a initial 3D scene that will hold all the project (main.tscn)
+If you’re new to the editor workflow (scenes, nodes, signals, running the project), follow at least one of these official tutorials:
 
-- Scenes vs Nodes. add node vs instantiate child scene. New scene vs new inherited scene
+- [Your first 2D game (official Godot docs)](https://docs.godotengine.org/en/stable/getting_started/first_2d_game/index.html)
+- [Your first 3D game (official Godot docs)](https://docs.godotengine.org/en/stable/getting_started/first_3d_game/index.html)
+
+Even though this repo is XR/3D, the 2D tutorial is still useful for learning the editor basics and scripting patterns.
+
+### Rendering mode for standalone headsets (Quest 2 / Quest 3)
+
+Godot offers different renderer options. For standalone Android-based headsets like **Meta Quest 2 / Quest 3**, prefer the **Mobile** renderer to keep performance predictable on headset hardware.
+
+- Use **Mobile** for this starter project (good balance of features and performance for Quest).
+- Use **Forward+** mainly for desktop-class GPUs / PCVR and higher-end visuals.
+- Use **Compatibility** when you need maximum hardware support (older GPUs / strict constraints), at the cost of modern rendering features.
+
+> Tip: Pick the renderer early. Switching later can be done, but it may require re-checking materials, lighting, and project settings.
+
+### Create the main 3D scene (`main.tscn`)
+
+Create an initial 3D scene that will act as the root of the experience:
+
+1. Create a new scene and choose **Node3D** as the root.
+2. Save it as `main.tscn`.
+3. Set it as your main scene:
+   - **Project → Project Settings → Application → Run → Main Scene** → select `main.tscn`
+
+From here, `main.tscn` will be responsible for “composing” the XR experience by instantiating sub-scenes (floor, rig, interactables, etc.).
+
+### Scenes vs Nodes (the mental model)
+
+In Godot, everything you build is a tree of **nodes**, saved as a **scene** (`.tscn`):
+
+- **Node**: a single building block (transform, mesh, camera, script, light, collider, etc.).
+- **Scene**: a saved node tree that can be reused, instanced, and composed into larger scenes.
+
+Two common ways to grow your scene:
+
+- **Add Node**: you place a new node directly in the current scene tree (good for one-off elements or quick prototypes).
+- **Instantiate Child Scene**: you reuse a prebuilt scene inside another scene (best for modularity and reuse).
+
+For this repo, prefer **instantiating child scenes** for the XR rig, floor, and interactables so the project stays clean and reusable.
+
+### New scene vs inherited scene
+
+Godot gives you two main ways to create reusable building blocks:
+
+- **New Scene**: you build a scene from scratch (best when you’re designing your own components).
+- **New Inherited Scene**: you create a scene that extends an existing one (best when customizing template scenes from libraries like *Godot XR Tools*).
+
+In this project, you’ll typically:
+- create **new scenes** for your own content (e.g., `floor.tscn`, `rig.tscn`)
+- create **inherited scenes** when customizing XR Tools templates (e.g., a custom pickable object derived from XR Tools’ `pickable.tscn`)
+
 
 ## Hands on XR
 
