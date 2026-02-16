@@ -1,4 +1,4 @@
-# DEMO_KISA_XR_Starter
+# TUTORIAL_SCHELETON_KISA_XR_Starter
 
 [todo] Brief description of the aim of the repo in the context of
 
